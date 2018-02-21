@@ -1,0 +1,50 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
+
+group 'com.ssnau'
+version '1.0.0'
+
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.plugin-shadow'
+
+sourceCompatibility = 1.8
+mainClassName = 'com.ssnau.MainApplication'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    }
+}
+
+ext {
+    dropwizardVersion = '1.2.4'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'io.dropwizard', name: 'dropwizard-core', version: dropwizardVersion
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName 
+    }
+}
+
+shadowJar {
+  transform(ServiceFileTransformer)
+  exclude 'META-INF/*.DSA'
+  exclude 'META-INF/*.RSA'
+}
+
+run {
+    args 'server', 'config.yml.example'
+}
